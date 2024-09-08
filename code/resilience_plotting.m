@@ -8,6 +8,9 @@ function resilience_plotting(isdefault)
 %   al, 2021 data.
 % USAGE
 %   resilience_plotting(isdefault);
+% INPUTS
+%   isdefault - logical flag, true to use default weight settings. Optional
+%               and default is false
 % NOTES 
 %   O'Neill D W, Fanning A L, Lamb W F and Steinberger J K, 2018, 
 %   A good life for all within planetary boundaries. Nature Sustainability,
@@ -28,6 +31,9 @@ function resilience_plotting(isdefault)
 % CoastalSEA (c) Apr 2024
 %--------------------------------------------------------------------------
 %
+    if nargin<1
+        isdefault = false;
+    end
     userprompt = 'Select mat file>';
     [~, path]=uigetfile('*.mat',userprompt,'MultiSelect','off');
     if path==0, return; end    
@@ -38,7 +44,9 @@ function resilience_plotting(isdefault)
                 'Index timeseries'};
     selection = listdlg('ListString',listxt,"PromptString",'Select plot type:',...
                         'Name','Plot type','SelectionMode','single','ListSize',[180,200]);
-    if selection==length(listxt)
+    if isempty(selection)
+        return;                             %user cancelled
+    elseif selection==length(listxt)
         %load Fanning data with struct of data tables from 1992-2015
         load([path,'FanningData'],'BioPhysData','SocialData','-mat')
         load([path,'PopData1900-2021'],'PopData','-mat')   
@@ -63,12 +71,12 @@ function resilience_plotting(isdefault)
             scaled_data(BioPhysData,SocialData,YrPopData,true);
         case 5
             [BioPhysData,SocialData,YrPopData] = sortPop(BioPhysData,SocialData,YrPopData);
-            weighted_scores(BioPhysData,SocialData,YrPopData);
+            weighted_scores(BioPhysData,SocialData,YrPopData,isdefault);
         case 6
             [BioPhysData,SocialData,YrPopData] = sortPop(BioPhysData,SocialData,YrPopData);
-            country_selection(BioPhysData,SocialData,YrPopData);
+            country_selection(BioPhysData,SocialData,YrPopData,isdefault);
         case 7
-            index_ts(BioPhysData,SocialData,PopData);
+            index_ts(BioPhysData,SocialData,PopData,isdefault);
     end
 end
 %--------------------------------------------------------------------------
@@ -141,7 +149,7 @@ function radar_plot(BioPhysData,SocialData,titletxt)
                         'Marker','none',...
                         'FillOption','on',...
                         'FillTransparency',0.5);
-    hl1 = legend('BioPhysical','Safe space','Location','southwest');
+    hl1 = legend('Safe space','Biophysical','Location','southwest');
     hl1.Position(1:2) = [0.05,0.1];
     clear dataset axlabels axlim nrec
 
@@ -151,7 +159,8 @@ function radar_plot(BioPhysData,SocialData,titletxt)
     axlabels = SocialData.Properties.VariableDescriptions;
     % axlim = ceil(max(dataset));
     % axint = max(1,floor(axlim));    
-    axlim = 1.2; axint = 5;                               %bespoke settings
+    axlim = 1.2;                              %bespoke settings
+    axint = 5;  
     nrec = length(dataset);    
     dataset = [ones(size(dataset));dataset];
 
@@ -180,7 +189,7 @@ function radar_plot(BioPhysData,SocialData,titletxt)
     idx = [idx{:}]==22;
     hf(idx).FaceColor = [1,1,1];
 
-    hl2 = legend('Social','Safe space','Location','southwest');
+    hl2 = legend('Safe space','Social','Location','southwest');
     hl2.Position(1:2) = [0.55,0.1];
     sgtitle(titletxt);
 end
@@ -201,7 +210,7 @@ function exceedance_plot(BioPhysData,SocialData,YrPopData)
     markersz = 1000*YrPopData.Population/max(YrPopData.Population);
     scatter(ax,BPexcess,SLexcess,markersz,'filled',...
         'MarkerEdgeColor',blue,'MarkerFaceAlpha',0.1)
-    xlabel('Number of BioPhysical Limits exceeded')
+    xlabel('Number of Biophysical Limits exceeded')
     ylabel('Number of Social Limits not met')
     title('Number of Countries missing limits')
     subtitle('Circles represent population size')
@@ -214,9 +223,9 @@ function exceedance_plot(BioPhysData,SocialData,YrPopData)
     tiledlayout(3,2);
     nexttile([2,2]);
     ylabels = flipud(cellstr(num2str((0:width(SocialData))')));
-    tbl = table(BPexcess,SLexcess,'VariableNames',{'BioPhysical','Social'});
+    tbl = table(BPexcess,SLexcess,'VariableNames',{'Biophysical','Social'});
     hh1 = heatmap(tbl,1,2,'ColorMethod','count','YDisplayData',ylabels);
-    hh1.XLabel = 'Number of BioPhysical Limits exceeded';
+    hh1.XLabel = 'Number of Biophysical Limits exceeded';
     hh1.YLabel = 'Number of Social Limits not met';
     hh1.Title = 'Number of Countries missing limits';
 
@@ -231,7 +240,7 @@ function exceedance_plot(BioPhysData,SocialData,YrPopData)
     histogram(BPexcess);
     xticks(0:width(BioPhysData));
     xticklabels(cellstr(num2str((0:width(BioPhysData))'))');
-    xlabel('No. BioPhysical Limits exceeded');
+    xlabel('No. Biophysical Limits exceeded');
     ylabel('No. Countries');
 end
 
@@ -297,32 +306,32 @@ function yvar = scalevar(var,xmin,xmax,ispos,options)
     %variable rescaling function on to 0-1 score
     %variables have alreand been scaled such that x0=1
     x1 = 0.8;
-    if strcmp(options.type,'Logistic')        
-        if ispos
-            params = struct('A',0,'B',5,'C',1,'K',1,'nu',0.5,'M',0.5,'Q',2);
-        else
-            params = struct('A',0,'B',3,'C',1,'K',1,'nu',0.5,'M',0.5,'Q',2);
-        end
+    if strcmp(options.type,'Logistic')        %Logisitic function
+        % if ispos
+        %     params = struct('A',0,'B',5,'C',1,'K',1,'nu',0.5,'M',0.5,'Q',2);
+        % else
+        %     params = struct('A',0,'B',3,'C',1,'K',1,'nu',0.5,'M',0.5,'Q',2);
+        % end
         params = struct('A',0,'B',5,'C',1,'K',1,'nu',2,'M',x1,'Q',2);
         yvar = general_logistic(var,params,~ispos);        
-    elseif strcmp(options.type,'Linear')
+    elseif strcmp(options.type,'Linear')      %Linear function
         if ispos
             yvar = (var-xmin)./(xmax-xmin);
         else
             yvar = (xmax-var)./(xmax-xmin);
         end
-    else
+    else                                      %Line segment function
         x2 = 1;
         yvar = zeros(size(var));   
         idx1 = var<=x1;
         idx2 = var>x1 & var<=x2;
         idx3 = ~(idx1 | idx2);
-        if ispos                                         %function increasing     
+        if ispos                              %function increasing     
             y0 = options.SL;
             yvar(idx1) = y0(1)*(var(idx1)-xmin)./(x1-xmin);
             yvar(idx2) = y0(1)+(var(idx2)-x1)./(x2-x1)*(y0(2)-y0(1));
             yvar(idx3) = y0(2)+(var(idx3)-x2)./(xmax-x2).*(1-y0(2));
-        else                                             %function decreasing
+        else                                  %function decreasing
             y0 = options.BP;
             yvar(idx1) = y0(1)+(x1-var(idx1))./(x1-xmin).*(1-y0(1));
             yvar(idx2) = y0(2)+(x2-var(idx2))./(x2-x1)*(y0(1)-y0(2));
@@ -332,16 +341,21 @@ function yvar = scalevar(var,xmin,xmax,ispos,options)
 end
 
 %%
-function [BPweightscores,SLweightscores] = weighted_scores(BioPhysData,SocialData,YrPopData)
+function [BPweightscores,SLweightscores] = weighted_scores(BioPhysData,SocialData,YrPopData,isdefault)
     %set weights, apply to both datasets and plot scores and weighted
     %scores as radial plot and thumbnail plots
 
     %get the user to define weights for the variables
-%     BPweights = setVariableWeights(BioPhysData);
-%     SLweights = setVariableWeights(SocialData);
-%     if isempty(BPweights) || isempty(SLweights), return; end %user cancelled
-    BPweights = table(.2,.1,.1,.1,.2,.15,.15,'VariableNames',BioPhysData.Properties.VariableNames);
-    SLweights = table(0.05,.15,.15,.1,.1,.1,.1,0.05,0.05,.1,0.05,'VariableNames',SocialData.Properties.VariableNames);
+    if isdefault
+        %weights used in One Earth paper
+        BPweights = table(.2,.1,.1,.1,.2,.15,.15,'VariableNames',BioPhysData.Properties.VariableNames);
+        SLweights = table(0.05,.15,.15,.1,.1,.1,.1,0.05,0.05,.1,0.05,'VariableNames',SocialData.Properties.VariableNames);
+    else
+        BPweights = setVariableWeights(BioPhysData);
+        SLweights = setVariableWeights(SocialData);
+        if isempty(BPweights) || isempty(SLweights), return; end %user cancelled
+    end    
+
     %apply weights to biophysical scores-----------------------------------
     [BPscores,SLscores,options] = scaled_data(BioPhysData,SocialData,YrPopData,false);
     varnames = BPscores.Properties.VariableNames;
@@ -383,7 +397,7 @@ function [BPweightscores,SLweightscores] = weighted_scores(BioPhysData,SocialDat
     hfs = weightedscores_plot(BPtotalscore,SLtotalscore,YrPopData,1000);
     % target_marker(mnBPscore,mnSLscore,'SizeData',100,'Alpha',0.2,'MarkerEdgeColor','r','MarkerFaceColor','r');
     plotaxes = findobj(hfs.Children,'Tag','WSplot');
-    plotaxes.XLabel.String = 'BioPhysical score';
+    plotaxes.XLabel.String = 'Biophysical score';
     plotaxes.YLabel.String = 'Social score';
     plotaxes.Title.String = 'Metric scores by country';
 end
@@ -400,7 +414,7 @@ function hf = weightedscores_plot(BPvalues,SLvalues,YrPopData,mfactor)
     markersz = mfactor*YrPopData.Population/max(YrPopData.Population);
     scatter(ax,BPvalues,SLvalues,markersz,'filled',...
         'MarkerEdgeColor',blue,'MarkerFaceAlpha',0.1)
-    xlabel('Weighted BioPhysical score')
+    xlabel('Weighted biophysical score')
     ylabel('Weighted social score')
     title('Weighted metric scores by country')
     subtitle('Circles scaled by population size')    
@@ -426,9 +440,9 @@ function hf = weightedscores_plot(BPvalues,SLvalues,YrPopData,mfactor)
     %                           'MarkerEdgeColor','r','MarkerFaceColor','r');
 
     pwm = pop_weighted_mean(BPvalues,SLvalues,YrPopData.Population);
-    target_marker(pwm.x,pwm.z,'SizeData',150,'Alpha',0.2,'Tag','plotobj',...
+    target_marker(pwm.x,pwm.z,'SizeData',150,'Alpha',0.4,'Tag','plotobj',...
                               'MarkerEdgeColor','r','MarkerFaceColor','r');
-    text(ax,0.8,0.9,sprintf('R-I = %.2f\nB-I = %.2f\nN = %.0f',pwm.RI,pwm.BI,pwm.Nrec));
+    text(ax,0.8,0.9,sprintf('P-I = %.2f\nD-I = %.2f\nN = %.0f',pwm.RI,pwm.BI,pwm.Nrec));
 end
 
 %%
@@ -532,16 +546,20 @@ function varweights = setVariableWeights(var)
 end
 
 %%
-function country_selection(BioPhysData,SocialData,YrPopData)
+function country_selection(BioPhysData,SocialData,YrPopData,isdefault)
     %prompt user to select country and plot scores and weighted scores on
     %radar plots
     %get the user to define weights for the variables
-%     BPweights = setVariableWeights(BioPhysData);
-%     SLweights = setVariableWeights(SocialData);
-%     if isempty(BPweights) || isempty(SLweights), return; end %user cancelled
-
-    BPweights = table(.2,.1,.1,.1,.2,.15,.15,'VariableNames',BioPhysData.Properties.VariableNames);
-    SLweights = table(0.05,.15,.15,.1,.1,.1,.1,0.05,0.05,.1,0.05,'VariableNames',SocialData.Properties.VariableNames);
+    if isdefault
+        %weights used in One Earth paper
+        BPweights = table(.2,.1,.1,.1,.2,.15,.15,'VariableNames',BioPhysData.Properties.VariableNames);
+        SLweights = table(0.05,.15,.15,.1,.1,.1,.1,0.05,0.05,.1,0.05,'VariableNames',SocialData.Properties.VariableNames);
+    else
+        BPweights = setVariableWeights(BioPhysData);
+        SLweights = setVariableWeights(SocialData);
+        if isempty(BPweights) || isempty(SLweights), return; end %user cancelled
+    end  
+    
     %apply weights to biophysical scores-----------------------------------
     [BPscores,SLscores,~] = scaled_data(BioPhysData,SocialData,YrPopData,false);
     varnames = BPscores.Properties.VariableNames;
@@ -605,7 +623,7 @@ function country_score_plot(var,country)
                     'FillTransparency',0.5);
     hl1 = legend('Weighted','Unweighted','Location','southwest');
     hl1.Position(1:2) = [0.4,0.2];
-    title(sprintf('%s - BioPhysical',country))
+    title(sprintf('%s - Biophysical',country))
     clear dataset scoredata axlabels axlim nrec
 
     scoredata = var.SLscores{1,:};
@@ -623,7 +641,7 @@ function country_score_plot(var,country)
                     'AxesLimits',repmat([0;axlim],1,nrec),...
                     'AxesOffset',0,...
                     'AxesPrecision', 2,...
-                    'AxesDisplay', 'one',... %limit axes labels to one axis
+                    'AxesDisplay', 'one',...   %limit axes labels to one axis
                     'AxesLabelsEdge','none',...%border for axis labels off
                     'Color',[blue;green],...
                     'Marker','none',...
@@ -635,9 +653,9 @@ function country_score_plot(var,country)
 end
 
 %--------------------------------------------------------------------------
-% Radial-Index timeseries plots
+% Performance Index timeseries plots
 %% ------------------------------------------------------------------------
-function index_ts(BioPhysTS,SocialTS,PopData)
+function index_ts(BioPhysTS,SocialTS,PopData,isdefault)
     %compute and plot the time varying index
     yearvar = fieldnames(BioPhysTS);
     nyear = length(yearvar);
@@ -647,12 +665,17 @@ function index_ts(BioPhysTS,SocialTS,PopData)
     %get the user to define weights for the variables
     BPdata1 = subsampleTable(BioPhysTS,1,true);
     SLdata1 = subsampleTable(SocialTS,1,false);
-
-%     BPweights = setVariableWeights(BPdata1);
-%     SLweights = setVariableWeights(SLdata1);
-%     if isempty(BPweights) || isempty(SLweights), return; end %user cancelled
-    BPweights = table(.2,.1,.1,.1,.2,.15,.15,'VariableNames',BPdata1.Properties.VariableNames);
-    SLweights = table(0.05,.15,.15,.1,.1,.1,.1,0.05,0.05,.1,0.05,'VariableNames',SLdata1.Properties.VariableNames);
+    
+    if isdefault
+        %weights used in One Earth paper
+        BPweights = table(.2,.1,.1,.1,.2,.15,.15,'VariableNames',BPdata1.Properties.VariableNames);
+        SLweights = table(0.05,.15,.15,.1,.1,.1,.1,0.05,0.05,.1,0.05,'VariableNames',SLdata1.Properties.VariableNames);
+    else
+        BPweights = setVariableWeights(BPdata1);
+        SLweights = setVariableWeights(SLdata1);
+        if isempty(BPweights) || isempty(SLweights), return; end %user cancelled
+    end  
+   
     %select score scaling to use
     options = selectScoreScale();
 
@@ -711,18 +734,18 @@ function radial_index_ts_plot(yr,pwm)
     yyaxis left
     plot(ax,yr,pwm.RI,'Color',blue);
     xlabel('Year')
-    ylabel('Radial-Index')
+    ylabel('Performance Index')
     yyaxis right
     plot(ax,yr,pwm.BI,'Color',orange);
-    ylabel('Bias-Index')
-    legend({'Radial-Index','Bias-Index'},'Location','Best')
+    ylabel('Disparity Index')
+    legend({'Performance Index','Disparity Index'},'Location','Best')
     title(sprintf('Global indices for years %d-%d',yr(1),yr(end)))
 end
 
 %%
 function weightedscores_ts_plot(yr,first,last,pwm)
     %Weighted scores plot for first and last year with trace of 
-    %radial-index over time
+    %radial Index over time
     mfactor = 1000;  %factor to scale population markers
     orange = mcolor('orange');
     hf = weightedscores_plot(last.yrBP,last.yrSL,last.yrPop,mfactor);
@@ -740,8 +763,8 @@ function weightedscores_ts_plot(yr,first,last,pwm)
     end
     txt1 = sprintf('Data for %d',yr(1));
     txt2 = sprintf('Data for %d',yr(end));
-    legend({txt1,txt2,'R-I (t) trace'},'Location','north')
-    title(sprintf('Initial and Final weighted scores and Radial-Index for years %d-%d',...
+    legend({txt1,txt2,'Index(t) trace'},'Location','north')
+    title(sprintf('Initial and Final weighted scores and Performance Index for years %d-%d',...
                              yr(1),yr(end)))
 end
 %--------------------------------------------------------------------------
@@ -752,7 +775,7 @@ function options = selectScoreScale()
     options.type = questdlg('Select scaling function','Scaling','Logistic','Linear segments','Linear','Logistic');
 
     if strcmp(options.type,'Linear segments')
-        answers = inputdlg({'BioPhysical threshold at x=0.8 and 1','Social threshold at x=0.8 and 1'},...
+        answers = inputdlg({'Biophysical threshold at x=0.8 and 1','Social threshold at x=0.8 and 1'},...
                                         'Thresholds',1,{'0.8 0.2','0.5 0.8'});
         if isempty(answers), return; end
         options.BP = str2num(answers{1});  %#ok<ST2NM> %score value for variable-threshold

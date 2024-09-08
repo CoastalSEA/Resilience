@@ -25,12 +25,12 @@ function [hcr,hrg] = target_marker(varargin)
 %--------------------------------------------------------------------------
 %
     nvar = length(varargin);
-    if isa(varargin{1},'axes')           %first variable is x, y
+    if isa(varargin{1},'axes')         %first variable is x, y
         ax = varargin{1};
         x = varargin{2};
         y = varargin{3};
         offset = 3;
-    else                                 %axes not specified
+    else                               %axes not specified
         ax = gca;
         x = varargin{1};
         y = varargin{2};
@@ -38,7 +38,7 @@ function [hcr,hrg] = target_marker(varargin)
     end
 
     nprop = nvar-offset;
-    if nprop>0 && rem(nprop,2)==0        %additional properties defined                 
+    if nprop>0 && rem(nprop,2)==0      %additional properties defined                 
         for j=1:2:nprop
             prop.(varargin{offset+j}) = varargin{offset+j+1};
         end
@@ -47,12 +47,12 @@ function [hcr,hrg] = target_marker(varargin)
         return;        
     end
 
-    hold on
-    hcr = scatter(ax,x,y,'+');              %plot cross
-    hrg = scatter(ax,x,y,'o');              %plot circle
+    hold on                            %scatter provides transparency setting
+    hcr = scatter(ax,x,y,'+');         %plot cross
+    hrg = scatter(ax,x,y,'o');         %plot circle
 
     propnames = fieldnames(prop);
-    alpi = 1;                            %default transparency
+    alpi = 1;                          %default transparency
     for j=1:length(propnames)
         prop2set = propnames{j};
         if strcmp(prop2set,'SizeData')

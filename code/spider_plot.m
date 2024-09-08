@@ -1,14 +1,17 @@
 function varargout = spider_plot(P, varargin)
 %spider_plot Create a spider or radar plot with individual axes.
 %
+%source: https://github.com/NewGuy012/spider_plot/blob/master/spider_plot.m
+%
 % Syntax:
 %   spider_plot(P)
 %   spider_plot(P, Name, Value, ...)
 %   h = spider_plot(_)
 %
-% Documentation:
-%   Please refer to the MathWorks File Exchange or GitHub page for the
+% Documentation and License:
+%   Please refer to the GitHub page (or  MathWorks File Exchange) for the
 %   detailed documentation and examples.
+%   https://github.com/NewGuy012/spider_plot/tree/master
 
 %%% Data Properties %%%
 % Point properties
