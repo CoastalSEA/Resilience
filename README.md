@@ -41,7 +41,7 @@ _Run analysis function from the command line_
 * select plot type required and provide additional information as prompted.  
 
 ## See Also
-Townend, I.H., French, J., Nicholls, R.J., (2024),Framing resilience to manage complex environmental systems, One Earth.
+Townend, I.H., French, J., Nicholls, R.J., (2024), Framing resilience to manage complex environmental systems, One Earth.
  
 O'Neill, D.W., Fanning, A.L., Lamb, W.F., and Steinberger, J.K. (2018). A good life for all within planetary boundaries. Nature Sustainability 1, 88-95. https://doi.org/10.1038/s41893-018-0021-4.
 
