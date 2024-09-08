@@ -1,13 +1,13 @@
-function plot_oneilletal_data()
+function resilience_plotting(isdefault)
 %
 %-------header-------------------------------------------------------------
 % NAME
-%   plot_oneilletal_data.m
+%   resilience_plotting.m
 % PURPOSE
 %   function to analyse and plot O'Neill et al, 2018 data and Fanning et
 %   al, 2021 data.
 % USAGE
-%   plot_oneilletal_data();
+%   resilience_plotting(isdefault);
 % NOTES 
 %   O'Neill D W, Fanning A L, Lamb W F and Steinberger J K, 2018, 
 %   A good life for all within planetary boundaries. Nature Sustainability,
