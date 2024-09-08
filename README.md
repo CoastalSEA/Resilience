@@ -5,40 +5,40 @@ Code to generate the plots in the Supplemental Material in the paper "Framing re
 The code is provided as Open Source code (issued under a BSD 3-clause License).
 
 ## Requirements
-ModelUI is written in Matlab(TM) and requires v2016b, or later. 
-To run the code data needs to be downloaded as detailed below.
+ModelUI is written in Matlab(TM) and requires v2016b, or later. To run the code data needs to be downloaded from other other sources, as detailed below.
 
 ## Summary
-The paper explores the concept of resilience within a system dynamics framework and links this to the evaluation and selection of adaptation pathways and transitions within the constraints of a ‘safe operating space’ and shows how such a resilience-based approach could be used operationally. The coe in this repository was uxed to generate the figures in the Supplemental Material and Figure 7 of the main text.
+The paper explores the concept of resilience within a system dynamics framework and links this to the evaluation and selection of adaptation pathways and transitions within the constraints of a ‘safe operating space’ and shows how such a resilience-based approach could be used operationally. The code in this repository was used to generate the figures in the Supplemental Material and Figure 7 of the main text.
 
-
+![FigS8](https://github.com/user-attachments/assets/919b812e-cd36-4729-acf7-468706cb2350)
 
 ## Data sources needed to run code
-O'Neill et al data: https://static-content.springer.com/esm/art%3A10.1038%2Fs41893-018-0021-4/MediaObjects/41893_2018_21_MOESM2_ESM.xlsx
-Fanning et al data: https://static-content.springer.com/esm/art%3A10.1038%2Fs41893-021-00799-z/MediaObjects/41893_2021_799_MOESM3_ESM.xlsx
-Population data: https://ourworldindata.org/grapher/population
+O'Neill et al data: https://static-content.springer.com/esm/art%3A10.1038%2Fs41893-018-0021-4/MediaObjects/41893_2018_21_MOESM2_ESM.xlsx  
+Fanning et al data: https://static-content.springer.com/esm/art%3A10.1038%2Fs41893-021-00799-z/MediaObjects/41893_2021_799_MOESM3_ESM.xlsx  
+Population data: https://ourworldindata.org/grapher/population  
 
 ## Usage
-_Excel spreadsheets_
-41893_2018_21_MOESM2_ESM.xlsx - data from O'Neill et al, 2018
-41893_2021_799_MOESM3_ESM.xlsx - data from Fanning et al, 2021
-population.xlsx - data from  Gapminder - Population v7, 2022
+_Excel spreadsheets_  
+* 41893_2018_21_MOESM2_ESM.xlsx - data from O'Neill et al, 2018  
+* 41893_2021_799_MOESM3_ESM.xlsx - data from Fanning et al, 2021  
+* population.xlsx - data from  Gapminder - Population v7, 2022  
 
-_Matlab *.mat files_
-ONeillData.mat - created using 'read_oneill_data.m' to load excel file
-FanningData.mat - created using 'read_fanning_data.m' to load above file
-PopData1900-2021.mat, PopData2011.mat - created using 'read_pop_data.m' to load above file
+_Matlab *.mat files_  
+.mat files are used in the main plotting function and the following functions are provided to generate these from the source excel files
+* read_oneill_data.m - creates the ONeillData.mat file  
+* read_fanning_data.m - creates the FanningData.mat file  
+* read_pop_data.m - creates the PopData1900-2021.mat and PopData2011.mat files  
 
-_Matlab *.m files_
-general_logistic.m - return a curve defined by the generalised logisitc equation
-mcolor.m - select a default Matlab colour definition from table
-target_marker.m - generate a circle and cross "target" symbol
-plot_oneilletal_data.m - function to analyse and plot O'Neill et al, 2018 data and Fanning et al, 2021 data.
+_Matlab *.m files_  
+* resilience_plotting.m - function to analyse and plot O'Neill et al, 2018 data and Fanning et al, 2021 data  
+* general_logistic.m - return a curve defined by the generalised logisitc equation  
+* mcolor.m - select a default Matlab colour definition from table  
+* target_marker.m - generate a circle and cross "target" symbol  
 
-_Run analysis function from the command line_
->>plot_oneilletal_data ;
-when prompted select any mat file (it is just getting the path)
-select plot type required and provide additional information as prompted.
+_Run analysis function from the command line_  
+*>>* resilience_plotting;  
+* when prompted select any mat file (it is just getting the path)  
+* select plot type required and provide additional information as prompted.  
 
 ## See Also
 Townend, I.H., French, J., Nicholls, R.J., (2024),Framing resilience to manage complex environmental systems, One Earth.
