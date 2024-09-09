@@ -1,4 +1,4 @@
-# ModelUI
+# Resilience modelling
 Code to generate the plots in the Supplemental Material in the paper "Framing resilience to manage complex environmental systems", 2024, Townend I, French J, Nicholls R, One Earth, Cell Publications.
 
 ## Licence
