@@ -5,7 +5,7 @@ Code to generate the plots in the Supplemental Material in the paper "Framing re
 The code is provided as Open Source code (issued under a BSD 3-clause License).
 
 ## Requirements
-ModelUI is written in Matlab(TM) and requires v2016b, or later. To run the code data needs to be downloaded from other other sources, as detailed below.
+ModelUI is written in Matlab(TM) and requires Matlab R2016a or later and has been tested up to Matlab R2024a. To run the code data needs to be downloaded from other other sources, as detailed below.
 
 ## Summary
 The paper explores the concept of resilience within a system dynamics framework and links this to the evaluation and selection of adaptation pathways and transitions within the constraints of a ‘safe operating space’ and shows how such a resilience-based approach could be used operationally. The code in this repository was used to generate the figures in the Supplemental Material and Figure 7 of the main text.
@@ -30,13 +30,13 @@ _Matlab *.mat files_
 * read_pop_data.m - creates the PopData1900-2021.mat and PopData2011.mat files  
 
 _Matlab *.m files_  
-* resilience_plotting.m - function to analyse and plot O'Neill et al, 2018 data and Fanning et al, 2021 data  
+* resilience_modelling.m - function to analyse and plot O'Neill et al, 2018 data and Fanning et al, 2021 data  
 * general_logistic.m - return a curve defined by the generalised logisitc equation  
 * mcolor.m - select a default Matlab colour definition from table  
 * target_marker.m - generate a circle and cross "target" symbol  
 
 _Run analysis function from the command line_  
-*>>* resilience_plotting;  
+*>>* resilience_modelling;  
 * when prompted select any mat file (it is just getting the path)  
 * select plot type required and provide additional information as prompted.  
 

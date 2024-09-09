@@ -1,13 +1,13 @@
-function resilience_plotting(isdefault)
+function resilience_modelling(isdefault)
 %
 %-------header-------------------------------------------------------------
 % NAME
-%   resilience_plotting.m
+%   resilience_modelling.m
 % PURPOSE
 %   function to analyse and plot O'Neill et al, 2018 data and Fanning et
 %   al, 2021 data.
 % USAGE
-%   resilience_plotting(isdefault);
+%   resilience_modelling(isdefault);
 % INPUTS
 %   isdefault - logical flag, true to use default weight settings. Optional
 %               and default is false
@@ -157,10 +157,10 @@ function radar_plot(BioPhysData,SocialData,titletxt)
     dataset = SocialData{1,:};
     dataset(dataset<0.01 | isnan(dataset)) = 0.01;
     axlabels = SocialData.Properties.VariableDescriptions;
-    % axlim = ceil(max(dataset));
-    % axint = max(1,floor(axlim));    
-    axlim = 1.2;                              %bespoke settings
-    axint = 5;  
+    axlim = ceil(max(dataset));
+    axint = max(1,floor(axlim));    
+    % axlim = 1.2;                       %bespoke settings used for paper
+    % axint = 5;                         %nb. only work for selected cases   
     nrec = length(dataset);    
     dataset = [ones(size(dataset));dataset];
 
