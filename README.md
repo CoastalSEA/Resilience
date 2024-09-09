@@ -1,5 +1,5 @@
 # Resilience modelling
-Code to generate the plots in the Supplemental Material in the paper "Framing resilience to manage complex environmental systems", 2024, Townend I, French J, Nicholls R, One Earth, Cell Publications.
+Code to generate the plots in the Supplemental Material for the paper "Framing resilience to manage complex environmental systems", 2024, Townend I, French J, Nicholls R, One Earth, Cell Publications.
 
 ## Licence
 The code is provided as Open Source code (issued under a BSD 3-clause License).
