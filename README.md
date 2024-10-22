@@ -10,7 +10,7 @@ ModelUI is written in Matlab(TM) and requires Matlab R2016a or later and has bee
 ## Summary
 The paper explores the concept of resilience within a system dynamics framework and links this to the evaluation and selection of adaptation pathways and transitions within the constraints of a ‘safe operating space’ and shows how such a resilience-based approach could be used operationally. The code in this repository was used to generate the figures in the Supplemental Material and Figure 7 of the main text.
 
-![FigS8](https://github.com/user-attachments/assets/919b812e-cd36-4729-acf7-468706cb2350)
+![FigS8](https://github.com/user-attachments/assets/8c180436-68a5-4c1e-88cf-f52c5096d86c)
 
 ## Data sources needed to run code
 O'Neill et al data: https://static-content.springer.com/esm/art%3A10.1038%2Fs41893-018-0021-4/MediaObjects/41893_2018_21_MOESM2_ESM.xlsx  
