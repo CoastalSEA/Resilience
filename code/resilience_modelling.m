@@ -18,7 +18,7 @@ function resilience_modelling(isdefault)
 %
 %   Fanning A L, O’Neill D W, Hickel J and Roux N, 2021, 
 %   The social shortfall and ecological overshoot of nations.
-%   https://doi.org/10.1038/s41893-021-00799-z.
+%   https://doi.org/10.1038/s41893-021-00799-z. Data is from SI.
 %
 %   Gapminder, 2022, Gapminder - Population v7 and other sources – with 
 %   major processing by Our World in Data, Our World in Data, 
@@ -393,13 +393,15 @@ function [BPweightscores,SLweightscores] = weighted_scores(BioPhysData,SocialDat
     plotitle.String = sprintf('Weighted metric scores, means: R_B_P=%.2f; R_S=%.2f\nCircles represent population size',...
                                mnBPwtscore,mnSLwtscore);
 
-    weightedscores_plot(BPweightedscore,SLweightedscore,YrPopData,1000);    
+    %plot unweighted scores   
     hfs = weightedscores_plot(BPtotalscore,SLtotalscore,YrPopData,1000);
     % target_marker(mnBPscore,mnSLscore,'SizeData',100,'Alpha',0.2,'MarkerEdgeColor','r','MarkerFaceColor','r');
     plotaxes = findobj(hfs.Children,'Tag','WSplot');
     plotaxes.XLabel.String = 'Biophysical score';
     plotaxes.YLabel.String = 'Social score';
-    plotaxes.Title.String = 'Metric scores by country';
+    plotaxes.Title.String = 'Metric scores by country in 2011';
+    %plot weighted scores
+    weightedscores_plot(BPweightedscore,SLweightedscore,YrPopData,1000); 
 end
 
 %%
@@ -416,7 +418,7 @@ function hf = weightedscores_plot(BPvalues,SLvalues,YrPopData,mfactor)
         'MarkerEdgeColor',blue,'MarkerFaceAlpha',0.1)
     xlabel('Weighted biophysical score')
     ylabel('Weighted social score')
-    title('Weighted metric scores by country')
+    title('Weighted metric scores by country in 2011') %uses O'Neill et al data set for 2011
     subtitle('Circles scaled by population size')    
     hold on
     N = 20;
@@ -753,7 +755,7 @@ function weightedscores_ts_plot(yr,first,last,pwm)
     hold on
     markersz = mfactor*last.yrPop.Population/max(last.yrPop.Population);
     scatter(ax,first.yrBP,first.yrSL,markersz,'filled',...
-                            'MarkerEdgeColor',orange,'MarkerFaceAlpha',0.05);
+                            'MarkerEdgeColor',orange,'MarkerFaceAlpha',0.05,'Tag','first');
     plot(ax,pwm.x,pwm.z,'r','LineWidth',1);
     plot(ax,pwm.x(1),pwm.z(1),'xr','MarkerSize',10,'Tag','plotobj')
     hold off
@@ -761,9 +763,9 @@ function weightedscores_ts_plot(yr,first,last,pwm)
     for i=1:length(hl)
         hl(i).Annotation.LegendInformation.IconDisplayStyle = 'off';  
     end
-    txt1 = sprintf('Data for %d',yr(1));
-    txt2 = sprintf('Data for %d',yr(end));
-    legend({txt1,txt2,'Index(t) trace'},'Location','north')
+    txt1 = sprintf('Data for %d',yr(1));    %first data set
+    txt2 = sprintf('Data for %d',yr(end));  %last data set
+    legend({txt2,txt1,'Index(t) trace'},'Location','north')  %order 
     title(sprintf('Initial and Final weighted scores and Performance Index for years %d-%d',...
                              yr(1),yr(end)))
 end
